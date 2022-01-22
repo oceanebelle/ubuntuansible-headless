@@ -1,12 +1,11 @@
 ---
-- name: Check if jdk is installed
-  shell: which javac
-  register: has_java
-  check_mode: no
+- name: Check if jdk is installed  
+  register: has_java  
+  shell: "which javac"
+  changed_when: has_java.rc == 1
+  failed_when: false
   notify:
-  - install java and maven
-  changed_when:
-    - has_java.rc == 1
+   - install java and maven
 
 - meta: flush_handlers      
 

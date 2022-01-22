@@ -20,17 +20,15 @@ Setup a virtual environment
     $ sudo apt install -y python3-venv
     
     # create a directory to store python environments
-    $ mkdir ~/.env
-    $ cd ~/.env
+    $ mkdir -p ~/.env    
 
     # Create an env called "ansible" and activate
-    $ python3 -m venv ansible    
-    $ source ansible/bin/activate
+    $ python3 -m venv ~/.env/ansible    
+    $ source ~/.env/ansible/bin/activate
 
-Install ansible in virtual environment
+Install ansible using pip in virtual environment. Ensure that venv is activated
 
     $ python -m pip install ansible
-
     $ ansible --version
 
 ## Run the setup script for additional dev tools
@@ -42,9 +40,12 @@ Install ansible in virtual environment
     
 ## Switching virtual envs
 
+Activates a virtual environment
+
     $ source dev-activate-env local
 
-    # deactivates virtual environment
+deactivates virtual environment
+
     $ deactivate
 
 
