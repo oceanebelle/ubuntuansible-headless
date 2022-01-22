@@ -1,0 +1,37 @@
+---
+- name: Check if jdk is installed
+  shell: which javac
+  register: has_java
+  check_mode: no
+  notify:
+  - install java and maven
+  changed_when:
+    - has_java.rc == 1
+
+- meta: flush_handlers      
+
+- name: fetch maven home
+  shell: update-alternatives --display mvn | grep "currently" | sed -n 's/.* \(\/.*\)\/bin\/.*/\1/p'
+  register: mavenhomedir
+  changed_when: 
+    - maven_home | length == 0
+  notify:
+    - set maven home  
+    - source profile
+- debug: var=mavenhomedir.stdout_lines
+
+- meta: flush_handlers        
+
+- name: fetch java home
+  shell: update-alternatives --display javac | grep "currently" | sed -n 's/.* \(\/.*\)\/bin\/java.*/\1/p'
+  register: javahomedir
+  changed_when: 
+    - java_home | length == 0
+  notify:
+    - set java home
+    - source profile    
+- debug: var=javahomedir.stdout_lines
+
+- meta: flush_handlers        
+
+

@@ -1,0 +1,56 @@
+---
+- name: Check if sudoers don't require password
+  lineinfile: 
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+  become: yes
+  register: cansudo
+
+- name: Install packages
+  when: cansudo is not changed
+  apt:
+    pkg:
+    - vim
+    - curl
+    - wget
+    - git
+    - python3-pip
+    - build-essential
+    - libssl-dev
+    - libffi-dev
+    - python3-dev
+    state: present
+  register: out    
+  become: yes
+
+- debug: var=out.stdout_lines
+
+- name: Create bin directory
+  file:
+    path=~/bin
+    state=directory
+    mode=0700    
+
+- name: Copy dev-activate-env script to bin
+  template:
+    src: dev-activate-env
+    dest: "~/bin/dev-activate-env"
+    mode: preserve
+
+- name: setup git block
+  blockinfile: 
+    path: "{{ profile_path }}"
+    state: present
+    marker: "# {mark} Ansible Managed git prompt"
+    block: "{{ lookup('template', 'gitprompt.j2') }}"
+
+- name: Add aliases to profile
+  blockinfile:  
+    path: "{{ profile_path }}"
+    state: present
+    marker: "# {mark} Ansible Managed aliases"    
+    block: "{{ lookup('template', 'aliases.j2') }}"
+

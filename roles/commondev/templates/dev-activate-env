@@ -1,0 +1,18 @@
+#/bin/bash
+
+function activate() {
+    env_dir=~/.env/$1
+    mkdir -p $env_dir
+    python3 -m venv $env_dir
+    source $env_dir/bin/activate
+}
+
+py_env=$1
+if [[ -n "$py_env" ]]; then
+    activate $py_env
+else
+    echo "No python virtual environment name supplied"
+    exit 0
+fi
+
+

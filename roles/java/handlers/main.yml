@@ -1,0 +1,31 @@
+---
+- name: install java and maven
+  apt:
+    pkg:
+    - openjdk-11-jdk-headless
+    - openjdk-11-source
+    - maven
+    state: present
+  become: yes
+
+- name: set maven home
+  blockinfile: 
+    path: "{{ profile_path }}"
+    state: present
+    marker: "# {mark} Ansible Managed MAVEN"    
+    block: |
+      MAVEN_HOME={{ mavenhomedir.stdout }}
+      export MAVEN_HOME={{ mavenhomedir.stdout }}
+
+- name: set java home
+  blockinfile: 
+    path: "{{ profile_path }}"
+    state: present
+    marker: "# {mark} Ansible Managed JAVA"
+    block: |
+      # Java home 
+      JAVA_HOME={{ javahomedir.stdout }}
+      export JAVA_HOME={{ javahomedir.stdout }}
+
+- name: source profile
+  shell: ". {{ profile_path }}"
